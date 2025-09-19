@@ -10,15 +10,20 @@ import plotly.express as px
 st.set_page_config(page_title="Multi-Brand Luxury Skincare Dashboard", layout="wide")
 
 @st.cache_data
+@st.cache_data
 def load_excel(path="ibr final responses for dashboard 2.xlsx"):
-    # load all sheets into a dict of dataframes (strip column names)
-    xls = pd.ExcelFile(path)
+    import os
+    if not os.path.exists(path):
+        st.stop()  # stops execution and shows message
+    # explicitly use openpyxl, which we added to requirements.txt
+    xls = pd.ExcelFile(path, engine="openpyxl")
     sheets = {}
     for s in xls.sheet_names:
-        df = pd.read_excel(path, sheet_name=s)
+        df = pd.read_excel(path, sheet_name=s, engine="openpyxl")
         df.columns = [c.strip() for c in df.columns]
         sheets[s.strip()] = df
     return sheets
+
 
 sheets = load_excel()
 
